@@ -35,7 +35,7 @@ class Eaccelerator extends Cache {
      */
      public function get($name) {
         N('cache_read',1);
-         return eaccelerator_get($this->options['prefix'].$name);
+        return eaccelerator_get($this->options['prefix'].$name);
      }
 
     /**

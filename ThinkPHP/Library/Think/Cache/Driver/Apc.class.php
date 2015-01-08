@@ -38,7 +38,7 @@ class Apc extends Cache {
      */
      public function get($name) {
         N('cache_read',1);
-         return apc_fetch($this->options['prefix'].$name);
+        return apc_fetch($this->options['prefix'].$name);
      }
 
     /**

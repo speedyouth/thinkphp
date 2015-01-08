@@ -148,7 +148,9 @@ abstract class Driver {
             return $this->queryStr;
         }
         //释放前次的查询结果
-        if ( !empty($this->PDOStatement) ) $this->free();
+        if ( !empty($this->PDOStatement) ){
+            $this->free();
+        }
         $this->queryTimes++;
         N('db_query',1); // 兼容代码
         // 调试开始
@@ -196,7 +198,9 @@ abstract class Driver {
             return $this->queryStr;
         }
         //释放前次的查询结果
-        if ( !empty($this->PDOStatement) ) $this->free();
+        if ( !empty($this->PDOStatement) ){
+            $this->free();
+        }
         $this->executeTimes++;
         N('db_write',1); // 兼容代码
         // 记录开始执行时间
@@ -235,7 +239,9 @@ abstract class Driver {
      */
     public function startTrans() {
         $this->initConnect(true);
-        if ( !$this->_linkID ) return false;
+        if ( !$this->_linkID ){
+            return false;
+        }
         //数据rollback 支持
         if ($this->transTimes == 0) {
             $this->_linkID->beginTransaction();
@@ -297,7 +303,7 @@ abstract class Driver {
      * @return integer
      */
     public function getQueryTimes($execute=false){
-        return $execute?$this->queryTimes+$this->executeTimes:$this->queryTimes;
+        return $execute ? $this->queryTimes + $this->executeTimes : $this->queryTimes;
     }
 
     /**
@@ -433,10 +439,11 @@ abstract class Driver {
             // 支持 'field1'=>'field2' 这样的字段别名定义
             $array   =  array();
             foreach ($fields as $key=>$field){
-                if(!is_numeric($key))
+                if(!is_numeric($key)){
                     $array[] =  $this->parseKey($key).' AS '.$this->parseKey($field);
-                else
+                }else{
                     $array[] =  $this->parseKey($field);
+                }
             }
             $fieldsStr = implode(',', $array);
         }else{
@@ -456,10 +463,11 @@ abstract class Driver {
         if(is_array($tables)) {// 支持别名定义
             $array   =  array();
             foreach ($tables as $table=>$alias){
-                if(!is_numeric($table))
+                if(!is_numeric($table)){
                     $array[] =  $this->parseKey($table).' '.$this->parseKey($alias);
-                else
+                }else{
                     $array[] =  $this->parseKey($alias);
+                }
             }
             $tables  =  $array;
         }elseif(is_string($tables)){
@@ -631,8 +639,9 @@ abstract class Driver {
                     $op   =  ' AND ';
                 }
                 $array   =  array();
-                foreach ($where as $field=>$data)
+                foreach ($where as $field=>$data){
                     $array[] = $this->parseKey($field).' = '.$this->parseValue($data);
+                }
                 $whereStr   = implode($op,$array);
                 break;
         }
@@ -1051,12 +1060,13 @@ abstract class Driver {
      * @return void
      */
     protected function initConnect($master=true) {
-        if(!empty($this->config['deploy']))
+        if(!empty($this->config['deploy'])){
             // 采用分布式数据库
             $this->_linkID = $this->multiConnect($master);
-        else
+        }elseif ( !$this->_linkID ){
             // 默认单数据库
-            if ( !$this->_linkID ) $this->_linkID = $this->connect();
+            $this->_linkID = $this->connect();
+        }
     }
 
     /**
@@ -1079,10 +1089,10 @@ abstract class Driver {
         // 数据库读写是否分离
         if($this->config['rw_separate']){
             // 主从式采用读写分离
-            if($master)
+            if($master){
                 // 主服务器写入
                 $r  =   $m;
-            else{
+            }else{
                 if(is_numeric($this->config['slave_no'])) {// 指定服务器读
                     $r = $this->config['slave_no'];
                 }else{

@@ -43,7 +43,9 @@ class Oracle extends Driver{
      */
     public function execute($str,$fetchSql=false) {
         $this->initConnect(true);
-        if ( !$this->_linkID ) return false;
+        if ( !$this->_linkID ){
+            return false;
+        }
         $this->queryStr = $str;
         if(!empty($this->bind)){
             $that   =   $this;

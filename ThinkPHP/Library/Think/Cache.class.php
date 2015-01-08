@@ -38,10 +38,11 @@ class Cache {
     public function connect($type='',$options=array()) {
         if(empty($type))  $type = C('DATA_CACHE_TYPE');
         $class  =   strpos($type,'\\')? $type : 'Think\\Cache\\Driver\\'.ucwords(strtolower($type));            
-        if(class_exists($class))
+        if(class_exists($class)){
             $cache = new $class($options);
-        else
+        }else{
             E(L('_CACHE_TYPE_INVALID_').':'.$type);
+        }
         return $cache;
     }
 
@@ -107,7 +108,7 @@ class Cache {
             $key =  array_shift($value);
             // 删除缓存
             $this->rm($key);
-             if(APP_DEBUG){
+            if(APP_DEBUG){
                 //调试模式下，记录出列次数
                 N($queue_name.'_out_times',1);
             }

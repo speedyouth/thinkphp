@@ -37,8 +37,9 @@ abstract class Controller {
         //实例化视图类
         $this->view     = Think::instance('Think\View');
         //控制器初始化
-        if(method_exists($this,'_initialize'))
+        if(method_exists($this,'_initialize')){
             $this->_initialize();
+        }
     }
 
     /**
@@ -213,24 +214,28 @@ abstract class Controller {
             case 'JSON' :
                 // 返回JSON数据格式到客户端 包含状态信息
                 header('Content-Type:application/json; charset=utf-8');
-                exit(json_encode($data,$json_option));
+                $data   =   json_encode($data,$json_option);
+                break;
             case 'XML'  :
                 // 返回xml格式数据
                 header('Content-Type:text/xml; charset=utf-8');
-                exit(xml_encode($data));
+                $data   =   xml_encode($data);
+                break;
             case 'JSONP':
                 // 返回JSON数据格式到客户端 包含状态信息
                 header('Content-Type:application/json; charset=utf-8');
-                $handler  =   isset($_GET[C('VAR_JSONP_HANDLER')]) ? $_GET[C('VAR_JSONP_HANDLER')] : C('DEFAULT_JSONP_HANDLER');
-                exit($handler.'('.json_encode($data,$json_option).');');  
+                $handler    =   isset($_GET[C('VAR_JSONP_HANDLER')]) ? $_GET[C('VAR_JSONP_HANDLER')] : C('DEFAULT_JSONP_HANDLER');
+                $data       =   $handler.'('.json_encode($data,$json_option).');';  
+                break;
             case 'EVAL' :
                 // 返回可执行的js脚本
                 header('Content-Type:text/html; charset=utf-8');
-                exit($data);            
+                break;         
             default     :
                 // 用于扩展其他返回格式数据
                 Hook::listen('ajax_return',$data);
         }
+        exit($data);
     }
 
     /**
@@ -266,28 +271,42 @@ abstract class Controller {
             $data['url']    =   $jumpUrl;
             $this->ajaxReturn($data);
         }
-        if(is_int($ajax)) $this->assign('waitSecond',$ajax);
-        if(!empty($jumpUrl)) $this->assign('jumpUrl',$jumpUrl);
+        if(is_int($ajax)){
+            $this->assign('waitSecond',$ajax);
+        }
+        if(!empty($jumpUrl)){
+            $this->assign('jumpUrl',$jumpUrl);
+        }
         // 提示标题
         $this->assign('msgTitle',$status? L('_OPERATION_SUCCESS_') : L('_OPERATION_FAIL_'));
         //如果设置了关闭窗口，则提示完毕后自动关闭窗口
-        if($this->get('closeWin'))    $this->assign('jumpUrl','javascript:window.close();');
+        if($this->get('closeWin')){
+            $this->assign('jumpUrl','javascript:window.close();');
+        }
         $this->assign('status',$status);   // 状态
         //保证输出不受静态缓存影响
         C('HTML_CACHE_ON',false);
         if($status) { //发送成功信息
             $this->assign('message',$message);// 提示信息
             // 成功操作后默认停留1秒
-            if(!isset($this->waitSecond))    $this->assign('waitSecond','1');
+            if(!isset($this->waitSecond)){
+                $this->assign('waitSecond','1');
+            }
             // 默认操作成功自动返回操作前页面
-            if(!isset($this->jumpUrl)) $this->assign("jumpUrl",$_SERVER["HTTP_REFERER"]);
+            if(!isset($this->jumpUrl)){
+                $this->assign("jumpUrl",$_SERVER["HTTP_REFERER"]);
+            }
             $this->display(C('TMPL_ACTION_SUCCESS'));
         }else{
             $this->assign('error',$message);// 提示信息
             //发生错误时候默认停留3秒
-            if(!isset($this->waitSecond))    $this->assign('waitSecond','3');
+            if(!isset($this->waitSecond)){
+                $this->assign('waitSecond','3');
+            }
             // 默认发生错误的话自动返回上页
-            if(!isset($this->jumpUrl)) $this->assign('jumpUrl',"javascript:history.back(-1);");
+            if(!isset($this->jumpUrl)){
+                $this->assign('jumpUrl',"javascript:history.back(-1);");
+            }
             $this->display(C('TMPL_ACTION_ERROR'));
             // 中止执行  避免出错后继续执行
             exit ;

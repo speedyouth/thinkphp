@@ -33,10 +33,10 @@ class Log {
 
     // 日志初始化
     static public function init($config=array()){
-        $type   =   isset($config['type'])?$config['type']:'File';
-        $class  =   strpos($type,'\\')? $type: 'Think\\Log\\Driver\\'. ucwords(strtolower($type));           
+        $type           =   isset($config['type'])?$config['type']:'File';
+        $class          =   strpos($type,'\\')? $type: 'Think\\Log\\Driver\\'. ucwords(strtolower($type));           
         unset($config['type']);
-        self::$storage = new $class($config);
+        self::$storage  =   new $class($config);
     }
 
     /**
@@ -50,7 +50,7 @@ class Log {
      */
     static function record($message,$level=self::ERR,$record=false) {
         if($record || false !== strpos(C('LOG_LEVEL'),$level)) {
-            self::$log[] =   "{$level}: {$message}\r\n";
+            self::$log[]    =   "{$level}: {$message}\r\n";
         }
     }
 
@@ -65,12 +65,13 @@ class Log {
     static function save($type='',$destination='') {
         if(empty(self::$log)) return ;
 
-        if(empty($destination))
-            $destination = C('LOG_PATH').date('y_m_d').'.log';
+        if(empty($destination)){
+            $destination    =   C('LOG_PATH').date('y_m_d').'.log';
+        }
         if(!self::$storage){
-            $type = $type?:C('LOG_TYPE');
-            $class  =   'Think\\Log\\Driver\\'. ucwords($type);
-            self::$storage = new $class();            
+            $type           =   $type ? : C('LOG_TYPE');
+            $class          =   'Think\\Log\\Driver\\'. ucwords($type);
+            self::$storage  =   new $class();            
         }
         $message    =   implode('',self::$log);
         self::$storage->write($message,$destination);
@@ -90,12 +91,13 @@ class Log {
      */
     static function write($message,$level=self::ERR,$type='',$destination='') {
         if(!self::$storage){
-            $type = $type?:C('LOG_TYPE');
-            $class  =   'Think\\Log\\Driver\\'. ucwords($type);
-            self::$storage = new $class();            
+            $type           =   $type ? : C('LOG_TYPE');
+            $class          =   'Think\\Log\\Driver\\'. ucwords($type);
+            self::$storage  =   new $class();            
         }
-        if(empty($destination))
-            $destination = C('LOG_PATH').date('y_m_d').'.log';        
+        if(empty($destination)){
+            $destination    =   C('LOG_PATH').date('y_m_d').'.log';        
+        }
         self::$storage->write("{$level}: {$message}", $destination);
     }
 }

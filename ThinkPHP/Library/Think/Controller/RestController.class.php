@@ -188,7 +188,9 @@ class RestController extends Controller {
      * @return string
      */
     protected function encodeData($data,$type='') {
-        if(empty($data))  return '';
+        if(empty($data)){
+            return '';
+        }
         if('json' == $type) {
             // 返回JSON数据格式到客户端 包含状态信息
             $data = json_encode($data);
@@ -211,11 +213,16 @@ class RestController extends Controller {
      * @return void
      */
     public function setContentType($type, $charset=''){
-        if(headers_sent()) return;
-        if(empty($charset))  $charset = C('DEFAULT_CHARSET');
+        if(headers_sent()){
+            return;
+        }
+        if(empty($charset)){
+            $charset = C('DEFAULT_CHARSET');
+        }
         $type = strtolower($type);
-        if(isset($this->allowOutputType[$type])) //过滤content_type
+        if(isset($this->allowOutputType[$type])){//过滤content_type
             header('Content-Type: '.$this->allowOutputType[$type].'; charset='.$charset);
+        }
     }
 
     /**

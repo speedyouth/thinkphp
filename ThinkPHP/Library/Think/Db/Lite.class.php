@@ -78,7 +78,7 @@ class Lite {
         if(!empty($config)) {
             $this->config           =   array_merge($this->config,$config);
             if(is_array($this->config['params'])){
-                $this->options  +=   $this->config['params'];
+                $this->options  =   $this->config['params'] + $this->options;
             }
         }
     }
@@ -99,7 +99,9 @@ class Lite {
                 }
                 $this->linkID[$linkNum] = new PDO( $config['dsn'], $config['username'], $config['password'],$this->options);
             }catch (\PDOException $e) {
-                E($e->getMessage());
+                if($config['debug']){
+                    E($e->getMessage());
+                }
             }
         }
         return $this->linkID[$linkNum];
@@ -143,8 +145,10 @@ class Lite {
         // 调试开始
         $this->debug(true);
         $this->PDOStatement = $this->_linkID->prepare($str);
-        if(false === $this->PDOStatement)
-            E($this->error());
+        if(false === $this->PDOStatement){
+            $this->error();
+            return false;
+        }
         foreach ($bind as $key => $val) {
             if(is_array($val)){
                 $this->PDOStatement->bindValue($key, $val[0], $val[1]);
@@ -179,14 +183,17 @@ class Lite {
             $this->queryStr =   strtr($this->queryStr,array_map(function($val) use($that){ return '\''.$that->escapeString($val).'\''; },$bind));
         }      
         //释放前次的查询结果
-        if ( !empty($this->PDOStatement) ) $this->free();
+        if ( !empty($this->PDOStatement) ){
+            $this->free();
+        }
         $this->executeTimes++;
         N('db_write',1); // 兼容代码        
         // 记录开始执行时间
         $this->debug(true);
         $this->PDOStatement =   $this->_linkID->prepare($str);
         if(false === $this->PDOStatement) {
-            E($this->error());
+            $this->error();
+            return false;
         }
         foreach ($bind as $key => $val) {
             if(is_array($val)){
@@ -216,7 +223,9 @@ class Lite {
      */
     public function startTrans() {
         $this->initConnect(true);
-        if ( !$this->_linkID ) return false;
+        if ( !$this->_linkID ){
+            return false;
+        }
         //数据rollback 支持
         if ($this->transTimes == 0) {
             $this->_linkID->beginTransaction();
@@ -278,7 +287,7 @@ class Lite {
      * @return integer
      */
     public function getQueryTimes($execute=false){
-        return $execute?$this->queryTimes+$this->executeTimes:$this->queryTimes;
+        return $execute ? $this->queryTimes + $this->executeTimes : $this->queryTimes;
     }
 
     /**
@@ -397,12 +406,13 @@ class Lite {
      * @return void
      */
     protected function initConnect($master=true) {
-        if(!empty($this->config['deploy']))
+        if(!empty($this->config['deploy'])){
             // 采用分布式数据库
             $this->_linkID = $this->multiConnect($master);
-        else
+        }elseif ( !$this->_linkID ){
             // 默认单数据库
-            if ( !$this->_linkID ) $this->_linkID = $this->connect();
+            $this->_linkID = $this->connect();
+        }
     }
 
     /**
@@ -424,10 +434,10 @@ class Lite {
         // 数据库读写是否分离
         if($this->config['rw_separate']){
             // 主从式采用读写分离
-            if($master)
+            if($master){
                 // 主服务器写入
                 $r  =   floor(mt_rand(0,$this->config['master_num']-1));
-            else{
+            }else{
                 if(is_numeric($this->config['slave_no'])) {// 指定服务器读
                     $r = $this->config['slave_no'];
                 }else{

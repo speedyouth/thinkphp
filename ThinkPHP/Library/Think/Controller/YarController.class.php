@@ -20,11 +20,13 @@ class YarController {
      */
     public function __construct() {
         //控制器初始化
-        if(method_exists($this,'_initialize'))
+        if(method_exists($this,'_initialize')){
             $this->_initialize();
+        }
         //判断扩展是否存在
-        if(!extension_loaded('yar'))
+        if(!extension_loaded('yar')){
             E(L('_NOT_SUPPORT_').':yar');
+        }
         //实例化Yar_Server
         $server     =   new \Yar_Server($this);
         // 启动server

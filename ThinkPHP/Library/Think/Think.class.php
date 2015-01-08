@@ -41,8 +41,9 @@ class Think {
       if(!APP_DEBUG && Storage::has($runtimefile)){
           Storage::load($runtimefile);
       }else{
-          if(Storage::has($runtimefile))
-              Storage::unlink($runtimefile);
+          if(Storage::has($runtimefile)){
+            Storage::unlink($runtimefile);
+          }
           $content =  '';
           // 读取应用模式
           $mode   =   include is_file(CONF_PATH.'core.php')?CONF_PATH.'core.php':MODE_PATH.APP_MODE.'.php';
@@ -60,8 +61,9 @@ class Think {
           }
 
           // 读取当前应用模式对应的配置文件
-          if('common' != APP_MODE && is_file(CONF_PATH.'config_'.APP_MODE.CONF_EXT))
-              C(load_config(CONF_PATH.'config_'.APP_MODE.CONF_EXT));  
+          if('common' != APP_MODE && is_file(CONF_PATH.'config_'.APP_MODE.CONF_EXT)){
+              C(load_config(CONF_PATH.'config_'.APP_MODE.CONF_EXT));
+          }
 
           // 加载模式别名定义
           if(isset($mode['alias'])){
@@ -69,18 +71,19 @@ class Think {
           }
 
           // 加载应用别名定义文件
-          if(is_file(CONF_PATH.'alias.php'))
+          if(is_file(CONF_PATH.'alias.php')){
               self::addMap(include CONF_PATH.'alias.php');
-
+          }
           // 加载模式行为定义
           if(isset($mode['tags'])) {
               Hook::import(is_array($mode['tags'])?$mode['tags']:include $mode['tags']);
           }
 
           // 加载应用行为定义
-          if(is_file(CONF_PATH.'tags.php'))
+          if(is_file(CONF_PATH.'tags.php')){
               // 允许应用增加开发模式配置定义
-              Hook::import(include CONF_PATH.'tags.php');   
+              Hook::import(include CONF_PATH.'tags.php');  
+          } 
 
           // 加载框架底层语言包
           L(include THINK_PATH.'Lang/'.strtolower(C('DEFAULT_LANG')).'.php');
@@ -93,14 +96,16 @@ class Think {
             // 调试模式加载系统默认的配置文件
             C(include THINK_PATH.'Conf/debug.php');
             // 读取应用调试配置文件
-            if(is_file(CONF_PATH.'debug'.CONF_EXT))
-                C(include CONF_PATH.'debug'.CONF_EXT);           
+            if(is_file(CONF_PATH.'debug'.CONF_EXT)){
+                C(include CONF_PATH.'debug'.CONF_EXT);    
+            }       
           }
       }
 
       // 读取当前应用状态对应的配置文件
-      if(APP_STATUS && is_file(CONF_PATH.APP_STATUS.CONF_EXT))
+      if(APP_STATUS && is_file(CONF_PATH.APP_STATUS.CONF_EXT)){
           C(include CONF_PATH.APP_STATUS.CONF_EXT);   
+      }
 
       // 设置系统时区
       date_default_timezone_set(C('DEFAULT_TIMEZONE'));
@@ -196,13 +201,14 @@ class Think {
         if(!isset(self::$_instance[$identify])) {
             if(class_exists($class)){
                 $o = new $class();
-                if(!empty($method) && method_exists($o,$method))
+                if(!empty($method) && method_exists($o,$method)){
                     self::$_instance[$identify] = call_user_func(array(&$o, $method));
-                else
+                }else{
                     self::$_instance[$identify] = $o;
-            }
-            else
+                }
+            }else{
                 self::halt(L('_CLASS_NOT_EXIST_').':'.$class);
+            }
         }
         return self::$_instance[$identify];
     }

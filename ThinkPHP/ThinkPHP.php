@@ -17,10 +17,12 @@
 $GLOBALS['_beginTime'] = microtime(TRUE);
 // 记录内存初始使用
 define('MEMORY_LIMIT_ON',function_exists('memory_get_usage'));
-if(MEMORY_LIMIT_ON) $GLOBALS['_startUseMems'] = memory_get_usage();
+if(MEMORY_LIMIT_ON){
+    $GLOBALS['_startUseMems'] = memory_get_usage();
+}
 
 // 版本信息
-const THINK_VERSION     =   '3.2.3';
+const THINK_VERSION     =   '3.2.4beta';
 
 // URL 模式定义
 const URL_COMMON        =   0;  //普通模式

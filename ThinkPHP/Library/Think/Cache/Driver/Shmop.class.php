@@ -82,7 +82,9 @@ class Shmop extends Cache {
         N('cache_write',1);
         $lh = $this->_lock();
         $val = $this->get();
-        if (!is_array($val)) $val = array();
+        if (!is_array($val)){
+            $val = array();
+        }
         if( C('DATA_CACHE_COMPRESS') && function_exists('gzcompress')) {
             //数据压缩
             $value   =   gzcompress($value,3);
@@ -109,7 +111,9 @@ class Shmop extends Cache {
     public function rm($name) {
         $lh = $this->_lock();
         $val = $this->get();
-        if (!is_array($val)) $val = array();
+        if (!is_array($val)){
+            $val = array();
+        }
         $name   =   $this->options['prefix'].$name;
         unset($val[$name]);
         $val = serialize($val);

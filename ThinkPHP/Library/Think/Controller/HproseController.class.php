@@ -26,8 +26,9 @@ class HproseController {
      */
     public function __construct() {
         //控制器初始化
-        if(method_exists($this,'_initialize'))
+        if(method_exists($this,'_initialize')){
             $this->_initialize();
+        }
         //导入类库
         Vendor('Hprose.HproseHttpServer');
         //实例化HproseHttpServer

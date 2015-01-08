@@ -95,9 +95,9 @@ class Route {
 
     // 检测URL和规则路由是否匹配
     private static function checkUrlMatch($regx,$rule) {
-        $m1 = explode('/',$regx);
-        $m2 = explode('/',$rule);
-        $var = array();         
+        $m1     =   explode('/',$regx);
+        $m2     =   explode('/',$rule);
+        $var    =   array();         
         foreach ($m2 as $key=>$val){
             if(0 === strpos($val,'[:')){
                 $val    =   substr($val,1,-1);
@@ -111,8 +111,9 @@ class Route {
                 if(strpos($val,'\\')) {
                     $type = substr($val,-1);
                     if('d'==$type) {
-                        if(isset($m1[$key]) && !is_numeric($m1[$key]))
+                        if(isset($m1[$key]) && !is_numeric($m1[$key])){
                             return false;
+                        }
                     }
                     $name = substr($val, 1, -2);
                 }elseif($pos = strpos($val,'^')){

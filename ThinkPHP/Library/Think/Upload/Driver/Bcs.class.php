@@ -43,8 +43,9 @@ class Bcs {
         $this->config = array_merge($this->config, $config);
         
         $bcsClass = dirname(__FILE__). "/Bcs/bcs.class.php";
-        if(is_file($bcsClass))
+        if(is_file($bcsClass)){
             require_once($bcsClass);
+        }
         $this->bcs = new BaiduBCS ( $this->config['AccessKey'], $this->config['SecretKey'], self:: DEFAULT_URL );
     }
 
@@ -218,8 +219,9 @@ class Bcs {
             'object'=>$object
         );
         $response = $this->request($this->apiurl.'?'.http_build_query($param), 'POST');
-        if($response)
+        if($response){
             $response = json_decode($response, true);
+        }
         return $response['content'][$method];
     }
 

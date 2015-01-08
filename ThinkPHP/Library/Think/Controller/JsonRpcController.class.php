@@ -20,8 +20,9 @@ class JsonRpcController {
      */
     public function __construct() {
         //控制器初始化
-        if(method_exists($this,'_initialize'))
+        if(method_exists($this,'_initialize')){
             $this->_initialize();
+        }
         //导入类库
         Vendor('jsonRPC.jsonRPCServer');
         // 启动server

@@ -146,7 +146,9 @@ class Upload {
         $files   =  $this->dealFiles($files);    
         foreach ($files as $key => $file) {
             $file['name']  = strip_tags($file['name']);
-            if(!isset($file['key']))   $file['key']    =   $key;
+            if(!isset($file['key'])){
+                $file['key']    =   $key;
+            }
             /* 通过扩展获取文件类型，可解决FLASH上传$FILES数组返回文件类型错误的问题 */
             if(isset($finfo)){
                 $file['type']   =   finfo_file ( $finfo ,  $file['tmp_name'] );
@@ -253,7 +255,7 @@ class Upload {
     private function setDriver($driver = null, $config = null){
         $driver = $driver ? : ($this->driver       ? : C('FILE_UPLOAD_TYPE'));
         $config = $config ? : ($this->driverConfig ? : C('UPLOAD_TYPE_CONFIG'));
-        $class = strpos($driver,'\\')? $driver : 'Think\\Upload\\Driver\\'.ucfirst(strtolower($driver));
+        $class  = strpos($driver,'\\')? $driver : 'Think\\Upload\\Driver\\'.ucfirst(strtolower($driver));
         $this->uploader = new $class($config);
         if(!$this->uploader){
             E("不存在上传驱动：{$name}");

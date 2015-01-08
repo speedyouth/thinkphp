@@ -47,7 +47,9 @@ class Mongo extends Driver {
      */
     public function connect($config='',$linkNum=0) {
         if ( !isset($this->linkID[$linkNum]) ) {
-            if(empty($config))  $config =   $this->config;
+            if(empty($config)){
+                $config =   $this->config;
+            }
             $host = 'mongodb://'.($config['username']?"{$config['username']}":'').($config['password']?":{$config['password']}@":'').$config['hostname'].($config['hostport']?":{$config['hostport']}":'').'/'.($config['database']?"{$config['database']}":'');
             try{
                 $this->linkID[$linkNum] = new \mongoClient( $host,$this->config['params']);
@@ -490,8 +492,9 @@ class Mongo extends Driver {
             $group = $this->_collection->group($keys,$initial,$reduce,$options);
             $this->debug(false);
             
-            if($cache && $group['ok'])
+            if($cache && $group['ok']){
                 S($key,$group,$cache['expire'],$cache['type']);
+            }
             
             return $group;
         } catch (\MongoCursorException $e) {
@@ -718,11 +721,13 @@ class Mongo extends Driver {
                 }
             }
         }
-        if($_logic == '$and')
+        if($_logic == '$and'){
             return $query;
+        }
         
-        foreach($query as $key=>$val)
+        foreach($query as $key=>$val){
             $return[$_logic][]  = array($key=>$val);
+        }
 
         return $return;
     }
@@ -758,8 +763,9 @@ class Mongo extends Driver {
         //兼容 MongoClient OR条件查询方法
         if(isset($query['$or']) && !is_array(current($query['$or']))) {
             $val = array();
-            foreach ($query['$or'] as $k=>$v)
+            foreach ($query['$or'] as $k=>$v){
                 $val[] = array($k=>$v);
+            }
             $query['$or'] = $val;
         }
         return $query;

@@ -136,8 +136,9 @@ class TagLib {
             default:  // 自动判断数组或对象 只支持二维
                 $condition  =   preg_replace('/\$(\w+)\.(\w+)\s/is','(is_array($\\1)?$\\1["\\2"]:$\\1->\\2) ',$condition);
         }
-        if(false !== strpos($condition, '$Think'))
+        if(false !== strpos($condition, '$Think')){
             $condition      =   preg_replace_callback('/(\$Think.*?)\s/is', array($this, 'parseThinkVar'), $condition);        
+        }
         return $condition;
     }
 
@@ -167,8 +168,9 @@ class TagLib {
                     break;
                 case 'obj':  // 识别为对象
                     $name = '$'.$var;
-                    foreach ($vars as $key=>$val)
+                    foreach ($vars as $key=>$val){
                         $name .= '->'.$val;
+                    }
                     break;
                 default:  // 自动判断数组或对象 只支持二维
                     $name = 'is_array($'.$var.')?$'.$var.'["'.$vars[0].'"]:$'.$var.'->'.$vars[0];
@@ -199,9 +201,15 @@ class TagLib {
         if(count($vars)>=3){
             $vars[2] = trim($vars[2]);
             switch($vars[1]){
-                case 'SERVER':    $parseStr = '$_SERVER[\''.$vars[2].'\']';break;
-                case 'GET':         $parseStr = '$_GET[\''.$vars[2].'\']';break;
-                case 'POST':       $parseStr = '$_POST[\''.$vars[2].'\']';break;
+                case 'SERVER':    
+                    $parseStr = '$_SERVER[\''.$vars[2].'\']';
+                    break;
+                case 'GET':         
+                    $parseStr = '$_GET[\''.$vars[2].'\']';
+                    break;
+                case 'POST':       
+                    $parseStr = '$_POST[\''.$vars[2].'\']';
+                    break;
                 case 'COOKIE':
                     if(isset($vars[3])) {
                         $parseStr = '$_COOKIE[\''.$vars[2].'\'][\''.$vars[3].'\']';
@@ -220,20 +228,43 @@ class TagLib {
                         $parseStr = '$_SESSION[\''.$vars[2].'\']';
                     }
                     break;
-                case 'ENV':         $parseStr = '$_ENV[\''.$vars[2].'\']';break;
-                case 'REQUEST':  $parseStr = '$_REQUEST[\''.$vars[2].'\']';break;
-                case 'CONST':     $parseStr = strtoupper($vars[2]);break;
-                case 'LANG':       $parseStr = 'L("'.$vars[2].'")';break;
-                case 'CONFIG':    $parseStr = 'C("'.$vars[2].'")';break;
+                case 'ENV':         
+                    $parseStr = '$_ENV[\''.$vars[2].'\']';
+                    break;
+                case 'REQUEST':  
+                    $parseStr = '$_REQUEST[\''.$vars[2].'\']';
+                    break;
+                case 'CONST':     
+                    $parseStr = strtoupper($vars[2]);
+                    break;
+                case 'LANG':       
+                    $parseStr = 'L("'.$vars[2].'")';
+                    break;
+                case 'CONFIG':    
+                    $parseStr = 'C("'.$vars[2].'")';
+                    break;
             }
         }else if(count($vars)==2){
             switch($vars[1]){
-                case 'NOW':       $parseStr = "date('Y-m-d g:i a',time())";break;
-                case 'VERSION':  $parseStr = 'THINK_VERSION';break;
-                case 'TEMPLATE':$parseStr = 'C("TEMPLATE_NAME")';break;
-                case 'LDELIM':    $parseStr = 'C("TMPL_L_DELIM")';break;
-                case 'RDELIM':    $parseStr = 'C("TMPL_R_DELIM")';break;
-                default:  if(defined($vars[1])) $parseStr = $vars[1];
+                case 'NOW':       
+                    $parseStr = "date('Y-m-d g:i a',time())";
+                    break;
+                case 'VERSION':  
+                    $parseStr = 'THINK_VERSION';
+                    break;
+                case 'TEMPLATE':
+                    $parseStr = 'C("TEMPLATE_NAME")';
+                    break;
+                case 'LDELIM':    
+                    $parseStr = 'C("TMPL_L_DELIM")';
+                    break;
+                case 'RDELIM':    
+                    $parseStr = 'C("TMPL_R_DELIM")';
+                    break;
+                default:  
+                    if(defined($vars[1])){
+                        $parseStr = $vars[1];
+                    }
             }
         }
         return $parseStr;

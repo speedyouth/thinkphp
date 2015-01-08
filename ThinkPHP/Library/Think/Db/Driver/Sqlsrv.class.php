@@ -120,10 +120,11 @@ class Sqlsrv extends Driver{
     public function parseLimit($limit) {
         if(empty($limit)) return '';
         $limit	=	explode(',',$limit);
-        if(count($limit)>1)
+        if(count($limit)>1){
             $limitStr	=	'(T1.ROW_NUMBER BETWEEN '.$limit[0].' + 1 AND '.$limit[0].' + '.$limit[1].')';
-        else
+        }else{
             $limitStr = '(T1.ROW_NUMBER BETWEEN 1 AND '.$limit[0].")";
+        }
         return 'WHERE '.$limitStr;
     }
 

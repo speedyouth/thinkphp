@@ -17,7 +17,7 @@ class Storage {
      * @var string
      * @access protected
      */
-    static protected $handler    ;
+    static protected $handler;
 
     /**
      * 连接分布式文件系统
@@ -27,8 +27,8 @@ class Storage {
      * @return void
      */
     static public function connect($type='File',$options=array()) {
-        $class  =   'Think\\Storage\\Driver\\'.ucwords($type);
-        self::$handler = new $class($options);
+        $class          =   'Think\\Storage\\Driver\\'.ucwords($type);
+        self::$handler  =   new $class($options);
     }
 
     static public function __callstatic($method,$args){

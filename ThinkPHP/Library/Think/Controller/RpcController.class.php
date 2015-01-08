@@ -23,8 +23,9 @@ class RpcController {
      */
     public function __construct() {
         //控制器初始化
-        if(method_exists($this,'_initialize'))
+        if(method_exists($this,'_initialize')){
             $this->_initialize();
+        }
         //导入类库
         Vendor('phpRPC.phprpc_server');
         //实例化phprpc

@@ -185,8 +185,9 @@ class Cx extends TagLib {
         $varArray   =   explode('|',$name);
         $name       =   array_shift($varArray);
         $name       =   $this->autoBuildVar($name);
-        if(count($varArray)>0)
+        if(count($varArray)>0){
             $name   =   $this->tpl->parseVarFunction($name,$varArray);
+        }
         $parseStr   =   '<?php switch('.$name.'): ?>'.$content.'<?php endswitch;?>';
         return $parseStr;
     }
@@ -204,8 +205,9 @@ class Cx extends TagLib {
             $varArray   =   explode('|',$value);
             $value	    =	array_shift($varArray);
             $value      =   $this->autoBuildVar(substr($value,1));
-            if(count($varArray)>0)
+            if(count($varArray)>0){
                 $value  =   $this->tpl->parseVarFunction($value,$varArray);
+            }
             $value      =   'case '.$value.': ';
         }elseif(strpos($value,'|')){
             $values     =   explode('|',$value);
@@ -254,8 +256,9 @@ class Cx extends TagLib {
         $varArray   =   explode('|',$name);
         $name       =   array_shift($varArray);
         $name       =   $this->autoBuildVar($name);
-        if(count($varArray)>0)
+        if(count($varArray)>0){
             $name = $this->tpl->parseVarFunction($name,$varArray);
+        }
         if('$' == substr($value,0,1)) {
             $value  =  $this->autoBuildVar(substr($value,1));
         }else {
@@ -322,8 +325,9 @@ class Cx extends TagLib {
         $varArray   =   explode('|',$name);
         $name       =   array_shift($varArray);
         $name       =   $this->autoBuildVar($name);
-        if(count($varArray)>0)
+        if(count($varArray)>0){
             $name   =   $this->tpl->parseVarFunction($name,$varArray);
+        }
 
         $type       =   isset($tag['type'])?$tag['type']:$type;
 
@@ -456,10 +460,11 @@ class Cx extends TagLib {
             $varArray  =    explode('|',$tag['value']);
             $name      =    array_shift($varArray);
             $name      =    $this->autoBuildVar($name);
-            if (!empty($varArray))
+            if (!empty($varArray)){
                 $name  =    $this->tpl->parseVarFunction($name,$varArray);
-            else
+            }else{
                 $name  =    'isset('.$name.')';
+            }
             $parseStr .=    '<?php if('.$name.'): ?>';
             $endStr    =    '<?php endif; ?>';
         }
@@ -586,21 +591,27 @@ class Cx extends TagLib {
         //获取属性
         foreach ($tag as $key => $value){
             $value = trim($value);
-            if(':'==substr($value,0,1))
+            if(':'==substr($value,0,1)){
                 $value = substr($value,1);
-            elseif('$'==substr($value,0,1))
+            }elseif('$'==substr($value,0,1)){
                 $value = $this->autoBuildVar(substr($value,1));
+            }
             switch ($key){
                 case 'start':   
-                    $start      = $value; break;
+                    $start      = $value; 
+                    break;
                 case 'end' :    
-                    $end        = $value; break;
+                    $end        = $value; 
+                    break;
                 case 'step':    
-                    $step       = $value; break;
+                    $step       = $value; 
+                    break;
                 case 'comparison':
-                    $comparison = $value; break;
+                    $comparison = $value; 
+                    break;
                 case 'name':
-                    $name       = $value; break;
+                    $name       = $value; 
+                    break;
             }
         }
         
