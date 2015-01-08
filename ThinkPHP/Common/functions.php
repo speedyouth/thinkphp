@@ -690,7 +690,6 @@ function controller($name,$path=''){
 function A($name,$layer='') {
     static $_action = array();
     $layer  =   $layer? : C('DEFAULT_C_LAYER');
-    $level  =   $level? : ($layer == C('DEFAULT_C_LAYER')?C('CONTROLLER_LEVEL'):1);
     if(isset($_action[$name.$layer])){
         return $_action[$name.$layer];
     }

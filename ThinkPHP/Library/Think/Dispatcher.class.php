@@ -216,12 +216,8 @@ class Dispatcher {
             $paths  =   explode($depr,trim($_SERVER['PATH_INFO'],$depr));
 
             if(!defined('BIND_CONTROLLER')) {// 获取控制器
-                if(C('CONTROLLER_LEVEL')>1){// 控制器层次
-                    $_GET[$varController]   =   implode('/',array_slice($paths,0,C('CONTROLLER_LEVEL')));
-                    $paths  =   array_slice($paths, C('CONTROLLER_LEVEL'));
-                }else{
-                    $_GET[$varController]   =   array_shift($paths);
-                }
+				$_GET[$varController]   =   array_shift($paths);
+
             }
             // 获取操作
             if(!defined('BIND_ACTION')){
