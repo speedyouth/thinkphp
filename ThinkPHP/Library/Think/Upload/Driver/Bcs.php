@@ -42,7 +42,7 @@ class Bcs {
         /* 默认FTP配置 */
         $this->config = array_merge($this->config, $config);
         
-        $bcsClass = dirname(__FILE__). "/Bcs/bcs.class.php";
+        $bcsClass = dirname(__FILE__). "/Bcs/bcs.php";
         if(is_file($bcsClass)){
             require_once($bcsClass);
         }
