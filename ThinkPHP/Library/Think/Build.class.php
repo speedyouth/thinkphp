@@ -127,9 +127,6 @@ class [MODEL]Model extends Model {
         $file   =   APP_PATH.$module.'/Controller/'.$controller.'Controller'.EXT;
         if(!is_file($file)){
             $content = str_replace(array('[MODULE]','[CONTROLLER]'),array($module,$controller),self::$controller);
-            if(!C('APP_USE_NAMESPACE')){
-                $content    =   preg_replace('/namespace\s(.*?);/','',$content,1);
-            }
             $dir = dirname($file);
             if(!is_dir($dir)){
                 mkdir($dir, 0755, true);
@@ -143,9 +140,6 @@ class [MODEL]Model extends Model {
         $file   =   APP_PATH.$module.'/Model/'.$model.'Model'.EXT;
         if(!is_file($file)){
             $content = str_replace(array('[MODULE]','[MODEL]'),array($module,$model),self::$model);
-            if(!C('APP_USE_NAMESPACE')){
-                $content    =   preg_replace('/namespace\s(.*?);/','',$content,1);
-            }
             $dir = dirname($file);
             if(!is_dir($dir)){
                 mkdir($dir, 0755, true);

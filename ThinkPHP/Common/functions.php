@@ -30,16 +30,18 @@ function C($name=null, $value=null,$default=null) {
     if (is_string($name)) {
         if (!strpos($name, '.')) {
             $name = strtoupper($name);
-            if (is_null($value))
+            if (is_null($value)){
                 return isset($_config[$name]) ? $_config[$name] : $default;
+            }
             $_config[$name] = $value;
             return null;
         }
         // 二维数组设置和获取支持
         $name = explode('.', $name);
         $name[0]   =  strtoupper($name[0]);
-        if (is_null($value))
+        if (is_null($value)){
             return isset($_config[$name[0]][$name[1]]) ? $_config[$name[0]][$name[1]] : $default;
+        }
         $_config[$name[0]][$name[1]] = $value;
         return null;
     }
@@ -155,8 +157,9 @@ function G($start,$end='',$dec=4) {
 function L($name=null, $value=null) {
     static $_lang = array();
     // 空参数返回所有定义
-    if (empty($name))
+    if (empty($name)){
         return $_lang;
+    }
     // 判断语言获取(或设置)
     // 若不存在,直接返回全大写$name
     if (is_string($name)) {
@@ -175,8 +178,9 @@ function L($name=null, $value=null) {
         return null;
     }
     // 批量定义
-    if (is_array($name))
+    if (is_array($name)){
         $_lang = array_merge($_lang, array_change_key_case($name, CASE_UPPER));
+    }
     return null;
 }
 
@@ -479,9 +483,9 @@ function require_cache($filename) {
  */
 function file_exists_case($filename) {
     if (is_file($filename)) {
-        if (IS_WIN && APP_DEBUG) {
-            if (basename(realpath($filename)) != basename($filename))
+        if (IS_WIN && APP_DEBUG && basename(realpath($filename)) != basename($filename)){
                 return false;
+            }
         }
         return true;
     }
@@ -551,8 +555,9 @@ function load($name, $baseUrl='', $ext='.php') {
             $name       =   implode('/',$array);
         }
     }
-    if (substr($baseUrl, -1) != '/')
+    if (substr($baseUrl, -1) != '/'){
         $baseUrl       .= '/';
+    }
     require_cache($baseUrl . $name . $ext);
 }
 
@@ -564,8 +569,9 @@ function load($name, $baseUrl='', $ext='.php') {
  * @return boolean
  */
 function vendor($class, $baseUrl = '', $ext='.php') {
-    if (empty($baseUrl))
+    if (empty($baseUrl)){
         $baseUrl = VENDOR_PATH;
+    }
     return import($class, $baseUrl, $ext);
 }
 
@@ -576,21 +582,20 @@ function vendor($class, $baseUrl = '', $ext='.php') {
  * @return Think\Model
  */
 function D($name='',$layer='') {
-    if(empty($name)) return new Think\Model;
+    if(empty($name)){
+        return new Think\Model;
+    }
     static $_model  =   array();
     $layer          =   $layer? : C('DEFAULT_M_LAYER');
-    if(isset($_model[$name.$layer]))
+    if(isset($_model[$name.$layer])){
         return $_model[$name.$layer];
+    }
     $class          =   parse_res_name($name,$layer);
     if(class_exists($class)) {
         $model      =   new $class(basename($name));
     }elseif(false === strpos($name,'/')){
         // 自动加载公共模块下面的模型
-        if(!C('APP_USE_NAMESPACE')){
-            import('Common/'.$layer.'/'.$class);
-        }else{
-            $class      =   '\\Common\\'.$layer.'\\'.$name.$layer;
-        }
+        $class      =   '\\Common\\'.$layer.'\\'.$name.$layer;
         $model      =   class_exists($class)? new $class($name) : new Think\Model($name);
     }else {
         Think\Log::record('D方法实例化没找到模型类'.$class,Think\Log::NOTICE);
@@ -626,34 +631,30 @@ function M($name='', $tablePrefix='',$connection='') {
  * 例如 module/controller addon://module/behavior
  * @param string $name 资源地址 格式：[扩展://][模块/]资源名
  * @param string $layer 分层名称
- * @param integer $level 控制器层次
  * @return string
  */
-function parse_res_name($name,$layer,$level=1){
+function parse_res_name($name,$layer){
     if(strpos($name,'://')) {// 指定扩展资源
         list($extend,$name)  =   explode('://',$name);
     }else{
         $extend  =   '';
     }
-    if(strpos($name,'/') && substr_count($name, '/')>=$level){ // 指定模块
+    if(strpos($name,'/')){ // 指定模块
         list($module,$name) =  explode('/',$name,2);
     }else{
         $module =   defined('MODULE_NAME') ? MODULE_NAME : '' ;
     }
     $array  =   explode('/',$name);
-    if(!C('APP_USE_NAMESPACE')){
-        $class  =   parse_name($name, 1);
-        import($module.'/'.$layer.'/'.$class.$layer);
-    }else{
-        $class  =   $module.'\\'.$layer;
-        foreach($array as $name){
-            $class  .=   '\\'.parse_name($name, 1);
-        }
-        // 导入资源类库
-        if($extend){ // 扩展资源
-            $class      =   $extend.'\\'.$class;
-        }
+
+    $class  =   $module.'\\'.$layer;
+    foreach($array as $name){
+        $class  .=   '\\'.parse_name($name, 1);
     }
+    // 导入资源类库
+    if($extend){ // 扩展资源
+        $class      =   $extend.'\\'.$class;
+    }
+
     return $class.$layer;
 }
 
@@ -665,17 +666,14 @@ function parse_res_name($name,$layer,$level=1){
  */
 function controller($name,$path=''){
     $layer  =   C('DEFAULT_C_LAYER');
-    if(!C('APP_USE_NAMESPACE')){
-        $class  =   parse_name($name, 1).$layer;
-        import(MODULE_NAME.'/'.$layer.'/'.$class);
-    }else{
-        $class  =   ( $path ? basename(ADDON_PATH).'\\'.$path : MODULE_NAME ).'\\'.$layer;
-        $array  =   explode('/',$name);
-        foreach($array as $name){
-            $class  .=   '\\'.parse_name($name, 1);
-        }
-        $class .=   $layer;
+
+    $class  =   ( $path ? basename(ADDON_PATH).'\\'.$path : MODULE_NAME ).'\\'.$layer;
+    $array  =   explode('/',$name);
+    foreach($array as $name){
+        $class  .=   '\\'.parse_name($name, 1);
     }
+    $class .=   $layer;
+
     if(class_exists($class)) {
         return new $class();
     }else {
@@ -687,17 +685,17 @@ function controller($name,$path=''){
  * 实例化多层控制器 格式：[资源://][模块/]控制器
  * @param string $name 资源地址
  * @param string $layer 控制层名称
- * @param integer $level 控制器层次
  * @return Think\Controller|false
  */
-function A($name,$layer='',$level=0) {
+function A($name,$layer='') {
     static $_action = array();
     $layer  =   $layer? : C('DEFAULT_C_LAYER');
     $level  =   $level? : ($layer == C('DEFAULT_C_LAYER')?C('CONTROLLER_LEVEL'):1);
-    if(isset($_action[$name.$layer]))
+    if(isset($_action[$name.$layer])){
         return $_action[$name.$layer];
+    }
     
-    $class  =   parse_res_name($name,$layer,$level);
+    $class  =   parse_res_name($name,$layer);
     if(class_exists($class)) {
         $action             =   new $class();
         $_action[$name.$layer]     =   $action;
@@ -802,23 +800,6 @@ function strip_whitespace($content) {
         }
     }
     return $stripStr;
-}
-
-/**
- * 自定义异常处理
- * @param string $msg 异常消息
- * @param string $type 异常类型 默认为Think\Exception
- * @param integer $code 异常代码 默认为0
- * @return void
- */
-function throw_exception($msg, $type='Think\\Exception', $code=0) {
-    Think\Log::record('建议使用E方法替代throw_exception',Think\Log::NOTICE);
-    if (class_exists($type, false)){
-        throw new $type($msg, $code);
-    }
-    else{
-        Think\Think::halt($msg);        // 异常类型不存在则输出错误信息字串
-    }
 }
 
 /**
@@ -1375,8 +1356,9 @@ function cookie($name='', $value='', $option=null) {
     }
     // 清除指定前缀的所有cookie
     if (is_null($name)) {
-        if (empty($_COOKIE))
+        if (empty($_COOKIE)){
             return null;
+        }
         // 要删除的cookie前缀，不指定则删除config设置的指定前缀
         $prefix = empty($value) ? $config['prefix'] : $value;
         if (!empty($prefix)) {// 如果前缀为空字符串将不作处理直接返回

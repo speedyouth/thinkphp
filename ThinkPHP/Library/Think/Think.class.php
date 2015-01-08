@@ -172,21 +172,6 @@ class Think {
               }
               include $filename;
           }
-        }elseif (!C('APP_USE_NAMESPACE')) {
-            // 自动加载的类库层
-            foreach(explode(',',C('APP_AUTOLOAD_LAYER')) as $layer){
-                if(substr($class,-strlen($layer))==$layer){
-                    if(require_cache(MODULE_PATH.$layer.'/'.$class.EXT)) {
-                        return ;
-                    }
-                }            
-            }
-            // 根据自动加载路径设置进行尝试搜索
-            foreach (explode(',',C('APP_AUTOLOAD_PATH')) as $path){
-                if(import($path.'.'.$class))
-                    // 如果加载类成功则返回
-                    return ;
-            }
         }
     }
 
